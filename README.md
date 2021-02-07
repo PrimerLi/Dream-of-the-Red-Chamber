@@ -1,6 +1,6 @@
-# Dream-of-the-Red-Chamber
 # 红楼梦人物关系图
-Network representation of character relationhips in Dream of the Red Chamber by Cao Xueqin
+
+## Network representation of character relationhips in Dream of the Red Chamber by Cao Xueqin
 
 This project aims to analyze the relationships between characters in Dream of the Red Chamber. 
 
