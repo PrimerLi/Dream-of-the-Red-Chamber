@@ -107,6 +107,10 @@ def get_scenes(aliases, output_file_name):
         if name not in alias_is_subname:
             alias_is_subname[name] = False
 
+    def step_function(x):
+        if x > 0:
+            return 1
+        return 0
     scenes = []
     for paragraph in corpus:
         character_appearance_times = dict()
@@ -118,7 +122,7 @@ def get_scenes(aliases, output_file_name):
                 alias_names = aliases[name]
                 for alias_name in alias_names:
                     counter += paragraph.count(alias_name)
-                character_appearance_times[name] = counter
+                character_appearance_times[name] = step_function(counter)
             else:
                 alias_names = aliases[name]
                 found = False
@@ -127,10 +131,10 @@ def get_scenes(aliases, output_file_name):
                         found = True
                         break
                 if found:
-                    counter = 0
+                    counter = 1
                     for alias_name in alias_names:
                         counter += paragraph.count(alias_name)
-                    character_appearance_times[name] = counter
+                    character_appearance_times[name] = step_function(counter)
         if len(character_appearance_times) > 0:
             scenes.append(character_appearance_times)
             #print paragraph
