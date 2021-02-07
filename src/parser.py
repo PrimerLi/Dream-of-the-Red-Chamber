@@ -83,14 +83,17 @@ def read_aliases(alias_file_name, character_list_file_name):
     reader.close()
     return aliases
 
-def get_scenes(aliases, output_file_name):
-    reader = open("content_list.txt", "r")
+def get_scenes(content_list_file_name, aliases, output_file_name):
+    reader = open(content_list_file_name, "r")
     content_list = reader.readlines()
     reader.close()
-    content_list = map(lambda line: "../data/" + line.strip("\n"), content_list)
+    content_list = map(lambda line: line.strip("\n"), content_list)
 
     corpus = []
     for i in range(len(content_list)):
+        #number = int(content_list[i].split("/")[-1].split(".")[0].split("_")[-1])
+        #if number > 80:
+        #    continue
         reader = open(content_list[i], "r")
         lines = reader.readlines()
         reader.close()
@@ -152,10 +155,15 @@ def get_scenes(aliases, output_file_name):
 
 def main():
     import sys
+    if len(sys.argv) != 2:
+        print "content_list_file_name = sys.argv[1]. "
+        return -1
+
+    content_list_file_name = sys.argv[1]
     aliases = read_aliases("aliases.txt", "names.txt")
     scene_file_name = "scenes.txt"
     print "Getting node coappearance times ... "
-    get_scenes(aliases, scene_file_name)
+    get_scenes(content_list_file_name, aliases, scene_file_name)
     print "Generating hyperedges ... "
     processor = Processor(scene_file_name)
     return 0
