@@ -1,4 +1,4 @@
-# 红楼梦人物关系图
+# 红楼梦人物关系的超图表示
 
 ## Network representation of character relationhips in Dream of the Red Chamber by Cao Xueqin
 
