@@ -55,10 +55,15 @@ class Processor:
             if len(node_counts_list) > 0:
                 self.all_node_counts[key] = merge_node_counts(node_counts_list)
 
+        def get_max_frequency(D):
+            a = list(D.iteritems())
+            return max(map(lambda ele: ele[1], a))
+
         writer = open(hyperedge_file_name, "w")
-        keys = self.all_node_counts.keys()
-        for key in keys:
-            writer.write(self.dict_to_string(self.all_node_counts[key]) + "\n")
+        pairs = sorted(self.all_node_counts.iteritems(), key = lambda ele: get_max_frequency(ele[1]), reverse = True)
+        for i in range(len(pairs)):
+            if len(pairs[i][1]) > 1:
+                writer.write(self.dict_to_string(pairs[i][1]) + "\n")
         writer.close()
 
 
@@ -83,7 +88,7 @@ def read_aliases(alias_file_name, character_list_file_name):
     reader.close()
     return aliases
 
-def get_scenes(content_list_file_name, aliases, output_file_name):
+def get_scenes(content_list_file_name, aliases, output_file_name, iprint = False):
     reader = open(content_list_file_name, "r")
     content_list = reader.readlines()
     reader.close()
@@ -114,6 +119,9 @@ def get_scenes(content_list_file_name, aliases, output_file_name):
         if x > 0:
             return 1
         return 0
+
+    if iprint:
+        writer = open("all_paragraphs.txt", "w")
     scenes = []
     for paragraph in corpus:
         character_appearance_times = dict()
@@ -140,10 +148,14 @@ def get_scenes(content_list_file_name, aliases, output_file_name):
                     character_appearance_times[name] = step_function(counter)
         if len(character_appearance_times) > 0:
             scenes.append(character_appearance_times)
-            #print paragraph
-            #keys = character_appearance_times.keys()
-            #for key in keys:
-                #print key, character_appearance_times[key]
+            if iprint:
+                writer.write(paragraph.encode("utf-8") + "\n")
+                keys = character_appearance_times.keys()
+                for key in keys:
+                    writer.write(key.encode("utf-8") + " : " + str(character_appearance_times[key]) + "\n")
+                writer.write("\n\n")
+    if iprint:
+        writer.close()
 
     writer = open(output_file_name, "w")
     for i in range(len(scenes)):
@@ -160,10 +172,11 @@ def main():
         return -1
 
     content_list_file_name = sys.argv[1]
-    aliases = read_aliases("aliases.txt", "names.txt")
-    scene_file_name = "scenes.txt"
+    aliases = read_aliases("aliases.dat", "names.dat")
+    scene_file_name = "scenes.dat"
     print "Getting node coappearance times ... "
-    get_scenes(content_list_file_name, aliases, scene_file_name)
+    iprint = True
+    get_scenes(content_list_file_name, aliases, scene_file_name, iprint)
     print "Generating hyperedges ... "
     processor = Processor(scene_file_name)
     return 0
